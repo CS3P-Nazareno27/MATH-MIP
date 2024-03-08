@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mathscape Wordscape Game</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-size: cover;
+            background-position: center;
+        }
+        
+        #header {
+            background-color: rgba(0, 0, 0, 0.5);
+            padding: 10px;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        #game-container {
+            width:900px;
+            height: 500px;
+            margin: 20px auto;
+            margin-left: 10px;
+            padding: 20px;
+            background-color: rgba(255, 255, 255, 0.8); 
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            color: black;
+            position: absolute;
+        }
+        
+        #equation {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+        
+        #circle-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            background-color:black;
+            position: absolute;
+            top: 10%;
+            left: 120%;
+            
+        }
+        
+        .circle-letter {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background-color: #007bff;
+            color:black;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 16px;
+            cursor: pointer;
+            position: absolute;
+        }
+        
+        #answer-input {
+            margin-top: 20px;
+            padding: 10px;
+            width: 80%;
+            margin: 0 auto;
+        }
+        
+        #message {
+            margin-top: 10px;
+            font-weight: bold;
+            color: #ff0000;
+        }
+        
+        #score {
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+        #go-back-btn{
+            padding: 8px 20px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            margin: 5px;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div id="header">
+        <div id="level-display">Reds Level</div>
+        <button onclick="goBack()" id="go-back-btn">Go Back</button>
+    </div>
+    <div id="game-container">  
+        <h1>MathScapes</h1>
+        <div id="equation-container">
+            <p id="equation">Equation</p>
+            <div id="circle-container"></div>
+            <input type="text" id="answer-input" placeholder="Type your answer here">
+            <button onclick = "checkAnswer()">Submit</button>
+            <p id="message"></p>
+            <p id="score">Score: <span id="score-value">0</span></p>
+            
+        </div>
+    </div>
+    <script>    
+        document.addEventListener('DOMContentLoaded', function() {
+            const equations = [
+                { equation: '2 + 2', answer: 'FOUR' },
+                { equation: '10 - 5', answer: 'FIVE' },
+                { equation: '3 * 3', answer: 'NINE' },
+                { equation: '20 / 4', answer: 'FIVE' },
+                { equation: '8 - 3', answer: 'FIVE' },
+                { equation: '12 + 13', answer: 'TWENTYFIVE' },
+                { equation: '20 - 8', answer: 'TWELVE' },
+                { equation: '4 * 4', answer: 'SIXTEEN' }
+            ];
+
+            const equationElement = document.getElementById('equation');
+            const circleContainer = document.getElementById('circle-container');
+            const submitBtn = document.getElementById('submit-btn');
+            const answerInput = document.getElementById('answer-input');
+            const messageElement = document.getElementById('message');
+            const scoreValueElement = document.getElementById('score-value');
+            const timeLeftElement = document.getElementById('time-left');
+
+            let currentEquation = {};
+            let score = 0;
+            let timeLeft = 150;
+
+            function chooseEquation(equations) {
+                return equations[Math.floor(Math.random() * equations.length)];
+            }
+
+            function displayEquation() {
+                currentEquation = chooseEquation(equations);
+                equationElement.textContent = currentEquation.equation;
+                createCircleLetters(currentEquation.answer);
+            }
+
+            function createCircleLetters(answer) {
+                circleContainer.innerHTML = '';
+                const letters = answer.split('');
+                const angleStep = (2 * Math.PI) / letters.length;
+                const radius = 100;
+                letters.forEach((letter, index) => {
+                    const angle = angleStep * index;
+                    const x = Math.cos(angle) * radius + 150; 
+                    const y = Math.sin(angle) * radius + 150; 
+                    const circleLetter = document.createElement('div');
+                    circleLetter.classList.add('circle-letter');
+                    circleLetter.style.left = x + 'px';
+                    circleLetter.style.top = y + 'px';
+                    circleLetter.textContent = letter;
+                    circleLetter.addEventListener('click', function() {
+                        answerInput.value += letter;
+                    });
+                    circleContainer.appendChild(circleLetter);
+                });
+            }
+
+            displayEquation();
+
+            submitBtn.addEventListener('click', function() {
+                checkAnswer(answerInput.value.trim());
+            });
+
+            const timerInterval = setInterval(function() {
+                timeLeft--;
+                timeLeftElement.textContent = timeLeft;
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    alert("Time's up! Your final score is: " + score);
+                    location.reload(); 
+                }
+            }, 1000);
+        });
+
+        function checkAnswer(answer) {
+            if (answer.toUpperCase() === currentEquation.answer) {
+                messageElement.textContent = "Correct!";
+                messageElement.style.color = "#4caf50";
+                score++;
+                scoreValueElement.textContent = score;
+            } else {
+                messageElement.textContent = "Incorrect. Try again.";
+                messageElement.style.color  = "#ff0000";
+            }
+            setTimeout(function() {
+                messageElement.textContent = '';
+                displayEquation();
+                answerInput.value = ''; 
+            }, 1000);
+        }
+
+        function goBack(){
+            console.log('bubu')
+            window.location.href = "game.html";        
+        }
+
+        function createCircleLetters(answer) {
+    circleContainer.innerHTML = '';
+    const letters = answer.split('');
+    const angleStep = (2 * Math.PI) / letters.length;
+    const radius = 100;
+    letters.forEach((letter, index) => {
+        const angle = angleStep * index;
+        const x = Math.cos(angle) * radius + 150; 
+        const y = Math.sin(angle) * radius + 150; 
+        const inputField = document.createElement('input');
+        inputField.classList.add('circle-input');
+        inputField.style.left = x + 'px';
+        inputField.style.top = y + 'px';
+        inputField.setAttribute('maxlength', 1);
+        inputField.addEventListener('input', function() {
+            const value = this.value.toUpperCase();
+            if (value === letter) {
+                const nextInput = document.querySelector('.circle-input:focus + .circle-input') || document.querySelector('.circle-input:first-of-type');
+                nextInput && nextInput.focus();
+                this.disabled = true;
+                checkAnswer(answerInput.value.trim()); 
+            }
+        });
+        circleContainer.appendChild(inputField);
+    });
+    circleContainer.querySelector('.circle-input').focus(); 
+}
+
+submitBtn.addEventListener('click', function() {
+    checkAnswer(answerInput.value.trim());
+});
+
+function checkAnswer(answer) {
+    if (answer.toUpperCase() === currentEquation.answer) {
+        messageElement.textContent = "Correct!";
+        messageElement.style.color = "#4caf50";
+        score++;
+        scoreValueElement.textContent = score;
+    } else {
+        messageElement.textContent = "Incorrect. Try again.";
+        messageElement.style.color  = "#ff0000";
+    }
+    setTimeout(function() {
+        messageElement.textContent = '';
+        displayEquation();
+        answerInput.value = ''; 
+    }, 1000);
+}
+
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mathscape Game</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-image: url('https://scontent.xx.fbcdn.net/v/t1.15752-9/423766495_734512628770451_5548537167609448562_n.jpg?stp=dst-jpg_s403x403&_nc_cat=101&ccb=1-7&_nc_sid=5f2048&_nc_eui2=AeFzQlnDC1UlQIlSwovGrnaExpLRgxKf4-rGktGDEp_j6ofpU8sIOc-4dO0KVzq5CCaAQI3uJQEb3KWgZ0OsKOc7&_nc_ohc=3NKOqrGrSdMAX_7Y3uc&_nc_oc=AQnFRITmsShUW5H7ysuuQV9MlTmrpIwyG_bHi84Of135qIzSWYbH3AwlUwot8Vj4an9rAmuxChaOuXkInryEOkWu&_nc_ad=z-m&_nc_cid=0&_nc_ht=scontent.xx&oh=03_AdRNxkJf3tgvIfRyjuIsUoTRCx8SUrOUOVGk50tr7lcMnQ&oe=6611425A'); /* Adjust the path to your background image */
+            background-size: cover;
+            background-position: center;
+        }
+        
+        #header {
+            background-color: rgba(0, 0, 0, 0.5);
+            padding: 10px;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        #game-container {
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: rgba(255, 255, 255, 0.8); 
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            color: black;
+        }   
+        
+        #equation {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+        
+        .choice-btn, #submit-btn, #go-back-btn {
+            padding: 8px 20px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            margin: 5px;
+            border-radius: 10px;
+        }
+        
+        .choice-btn:hover, #submit-btn:hover, #skip-btn:hover, #go-back-btn:hover {
+            background-color: #007bff;
+        }
+        
+        #user-input {
+            padding: 5px;
+            margin-bottom: 10px;
+            width: 200px;
+        }
+        
+        #message {
+            margin-top: 10px;
+            font-weight: bold;
+            color: #ff0000;
+        }
+        
+        #score {
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div id="header">
+        <div id="level-display">Keans Level (Easy)  </div>
+        <button onclick="goBack()" id="go-back-btn">Go Back</button>
+    </div>
+    <div id="game-container">
+        <h1>Solve the following eqns</h1>
+        <div id="equation-container">
+            <p id="equation">Equation</p>
+            <center><input type="text" id="user-input" placeholder="Enter your answer">
+            <button id="submit-btn">Submit</button></center>
+            <p id="message"></p>
+            <p id="score">Score: <span id="score-value">0</span></p>
+            <p id="timer">Time Left: <span id="time-left">60</span> seconds</p>
+        </div>
+    </div>
+    <script>    
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            const equations = [
+                { equation: '2 + 2', type: 'type_test', answer: 4 },
+                { equation: '10 - 5', type: 'type_test', answer: 5 },
+                { equation: '3 * 3', type: 'type_test', answer: 9 },
+                { equation: '20 / 4', type: 'type_test', answer: 5 },
+                { equation: '8 - 3', type: 'type_test', answer: 5 },
+                { equation: '12 + 13', type: 'multiple_choice', choices: [25, 23, 24], answer: 25 },
+                { equation: '20 - 8', type: 'multiple_choice', choices: [11, 12, 13], answer: 12 },
+                { equation: '4 * 4', type: 'multiple_choice', choices: [12, 16, 8], answer: 16 }
+            ];
+
+            const equationElement = document.getElementById('equation');
+            const userInput = document.getElementById('user-input');
+            const submitBtn = document.getElementById('submit-btn');
+            const messageElement = document.getElementById('message');
+            const scoreValueElement = document.getElementById('score-value');
+            const timeLeftElement = document.getElementById('time-left');
+
+            let currentEquation = {};
+            let score = 0;
+            let timeLeft = 60;
+
+            function chooseEquation(equations) {
+                return equations[Math.floor(Math.random() * equations.length)];
+            }
+
+            function displayEquation() {
+                currentEquation = chooseEquation(equations);
+                equationElement.textContent = currentEquation.equation;
+                if (currentEquation.type === 'type_test') {
+                    userInput.style.display = 'block';
+                    submitBtn.style.display = 'block';
+                    userInput.value = '';
+                    userInput.focus();
+                } else {
+                    userInput.style.display = 'none';
+                    submitBtn.style.display = 'none';
+                }
+                if (currentEquation.type === 'multiple_choice') {
+                    renderChoices(currentEquation.choices);
+                }
+            }
+
+            function renderChoices(choices) {
+                const choicesContainer = document.createElement('div');
+                choices.forEach(choice => {
+                    const choiceBtn = document.createElement('button');
+                    choiceBtn.textContent = choice;
+                    choiceBtn.classList.add('choice-btn');
+                    choiceBtn.addEventListener('click', function() {
+                        checkAnswer(choice);
+                    });
+                    choicesContainer.appendChild(choiceBtn);
+                });
+                equationElement.appendChild(choicesContainer);
+            }
+
+            function checkAnswer(choice) {
+                if (parseInt(choice) === currentEquation.answer) {
+                    messageElement.textContent = "Correct!";
+                    messageElement.style.color = "#4caf50";
+                    score++;
+                    scoreValueElement.textContent = score;
+                } else {
+                    messageElement.textContent = "Incorrect. Try again.";
+                    messageElement.style.color  = "#ff0000";
+                }
+                setTimeout(function() {
+                    messageElement.textContent = '';
+                    displayEquation();
+                }, 1000);
+            }
+
+            displayEquation();
+
+            submitBtn.addEventListener('click', function() {
+                if (currentEquation.type === 'type_test') {
+                    checkAnswer(userInput.value.trim());
+                }
+            });
+
+            const timerInterval = setInterval(function() {
+                timeLeft--;
+                timeLeftElement.textContent = timeLeft;
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    alert("Time's up! Your final score is: " + score);
+                    location.reload(); 
+                }
+            }, 1000);
+        });
+        function goBack(){
+            console.log('bubu')
+            window.location.href = "game.html"
+            
+        }
+    </script>
+</body>
+</html>
