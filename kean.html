@@ -1,191 +1,416 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mathscape Game</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-image: url('https://scontent.xx.fbcdn.net/v/t1.15752-9/423766495_734512628770451_5548537167609448562_n.jpg?stp=dst-jpg_s403x403&_nc_cat=101&ccb=1-7&_nc_sid=5f2048&_nc_eui2=AeFzQlnDC1UlQIlSwovGrnaExpLRgxKf4-rGktGDEp_j6ofpU8sIOc-4dO0KVzq5CCaAQI3uJQEb3KWgZ0OsKOc7&_nc_ohc=3NKOqrGrSdMAX_7Y3uc&_nc_oc=AQnFRITmsShUW5H7ysuuQV9MlTmrpIwyG_bHi84Of135qIzSWYbH3AwlUwot8Vj4an9rAmuxChaOuXkInryEOkWu&_nc_ad=z-m&_nc_cid=0&_nc_ht=scontent.xx&oh=03_AdRNxkJf3tgvIfRyjuIsUoTRCx8SUrOUOVGk50tr7lcMnQ&oe=6611425A'); /* Adjust the path to your background image */
-            background-size: cover;
-            background-position: center;
-        }
-        
-        #header {
-            background-color: rgba(0, 0, 0, 0.5);
-            padding: 10px;
-            color: white;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        #game-container {
-            max-width: 600px;
-            margin: 20px auto;
-            padding: 20px;
-            background-color: rgba(255, 255, 255, 0.8); 
-            border-radius: 5px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            text-align: center;
-            color: black;
-        }   
-        
-        #equation {
-            font-size: 24px;
-            margin-bottom: 20px;
-        }
-        
-        .choice-btn, #submit-btn, #go-back-btn {
-            padding: 8px 20px;
-            background-color: #007bff;
-            color: #fff;
-            border: none;
-            cursor: pointer;
-            margin: 5px;
-            border-radius: 10px;
-        }
-        
-        .choice-btn:hover, #submit-btn:hover, #skip-btn:hover, #go-back-btn:hover {
-            background-color: #007bff;
-        }
-        
-        #user-input {
-            padding: 5px;
-            margin-bottom: 10px;
-            width: 200px;
-        }
-        
-        #message {
-            margin-top: 10px;
-            font-weight: bold;
-            color: #ff0000;
-        }
-        
-        #score {
-            font-size: 18px;
-            margin-bottom: 10px;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mathscape Game</title>
+<style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-size: cover;
+      background-position: center;
+      background-color: #000000; 
+    }
+  
+    #header {
+      background-color: rgba(0, 0, 0, 0.5);
+      padding: 10px;
+      color: white;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+  
+    #go-back-btn {
+      padding: 8px 20px;
+      background-color: #007bff;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      margin: 5px;
+      border-radius: 10px;
+    }
+  
+    #go-back-btn:hover {
+      background-color: #0056b3; 
+    }
+  
+    .visible {
+      background-color: #fff;
+      width: 3.5vw;
+      height: 3.5vw;
+      max-height: 3.5vw;
+      max-width: 3.5vw;
+      font-size: 3vw;
+      font-family: Arial;
+      border-collapse: collapse;
+      border: 0.1vw solid black;
+      text-align: center;
+    }
+  
+    .invisible {
+      background-color: transparent;
+      min-width: 3.5vw;
+      width: 3.5vw;
+      height: 3.5vw;
+      max-height: 3.5vw;
+      max-width: 3.5vw;
+      font-size: 3vw;
+      font-family: Arial;
+      border-collapse: collapse;
+      border: 0.1vw solid transparent;
+      text-align: center;
+    }
+  
+    .crossword {
+      max-width: 100%;
+      cursor: context-menu;
+      float: left;
+      padding: 20px;
+      margin-top: 20px;
+    }
+  
+    input[type="text"] {
+      margin-top: 40px;
+      padding: 5px; 
+      font-size: 16px; 
+    }
+  
+    button {
+      padding: 8px 20px;
+      font-size: 16px; 
+      cursor: pointer;
+      background-color: #007bff;
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      margin-top: 10px; 
+    }
+  
+    button:hover {
+      background-color: #0056b3; 
+    }
+  
+    #hints {
+      margin-top: 20px; 
+      font-size: 14px; 
+      color:white;
+    }
+    .logo{
+        font-family: 'Press Start 2P', cursive;
+        font-size: 44px;
+    color: #fff;
+    padding: 10px;
+    }
+</style>
 </head>
 <body>
-    <div id="header">
-        <div id="level-display">Keans Level (Easy)  </div>
-        <button onclick="goBack()" id="go-back-btn">Go Back</button>
-    </div>
-    <div id="game-container">
-        <h1>Solve the following eqns</h1>
-        <div id="equation-container">
-            <p id="equation">Equation</p>
-            <center><input type="text" id="user-input" placeholder="Enter your answer">
-            <button id="submit-btn">Submit</button></center>
-            <p id="message"></p>
-            <p id="score">Score: <span id="score-value">0</span></p>
-            <p id="timer">Time Left: <span id="time-left">60</span> seconds</p>
-        </div>
-    </div>
+<div id="header">
+    <div class="logo">MathScapes (Level 1)</div>
+  <button onclick="goBack()" id="go-back-btn">Go Back</button>
+</div>
+<table class="crossword">
+  <tr>
+    <td id="r1c1" class="visible">‎ ₁</td>
+    <td id="r1c2" class="visible">‎ ₁</td>
+    <td id="r1c3" class="visible"></td>
+    <td id="r1c4" class="visible"></td>
+    <td id="r1c5" class="visible"></td>
+    <td id="r1c6" class="visible"></td>
+    <td id="r1c7" class="visible"></td>
+    <td id="r1c8" class="visible"></td>
+    <td class="invisible"></td>
+    <td class="invisible"></td>
+  </tr>
+  <tr>
+    <td class="invisible"></td>
+    <td id="r2c2" class="visible"></td>
+    <td class="invisible"></td>
+    <td class="invisible"></td>
+    <td class="invisible"></td>
+    <td class="invisible"></td>
+    <td class="invisible"></td>
+    <td class="invisible"></td>
+    <td class="invisible"></td>
+    <td class="invisible"></td>
+  </tr>
+  <tr>
+    <td id="r3c1" class="visible">‎ ₂</td>
+    <td id="r3c2" class="visible"></td>
+    <td id="r3c3" class="visible"></td>
+    <td id="r3c4" class="visible">‎ ₂</td>
+    <td id="r3c5" class="visible"></td>
+    <td id="r3c6" class="visible"></td>
+    <td id="r3c7" class="visible">‎ ₃</td>
+    <td id="r3c8" class="visible"></td>
+    <td class="invisible"></td>
+    <td class="invisible"></td>
+  </tr>
+  <tr>
+    <td class="invisible"></td>
+    <td id="r4c2" class="visible"></td>
+    <td class="invisible"></td>
+    <td id="r4c4" class="visible"></td>
+    <td class="invisible"></td>
+    <td class="invisible"></td>
+    <td id="r4c7" class="visible"></td>
+    <td class="invisible"></td>
+    <td class="invisible"></td>
+    <td class="invisible"></td>
+  </tr>
+  <tr>
+    <td class="invisible"></td>
+    <td id="r5c2" class="visible"></td>
+    <td class="invisible"></td>
+    <td id="r5c4" class="visible"></td>
+    <td class="invisible"></td>
+    <td class="invisible"></td>
+    <td id="r5c7" class="visible"></td>
+    <td class="invisible"></td>
+    <td class="invisible"></td>
+    <td class="invisible"></td>
+  </tr>
+  <tr>
+    <td class="invisible"></td>
+    <td id="r6c2" class="visible"></td>
+    <td class="invisible"></td>
+    <td id="r6c4" class="visible"></td>
+    <td class="invisible"></td>
+    <td class="invisible"></td>
+    <td id="r6c7" class="visible"></td>
+    <td class="invisible"></td>
+    <td class="invisible"></td>
+    <td class="invisible"></td>
+  </tr>
+  <tr>
+    <td class="invisible"></td>
+    <td id="r7c2" class="visible"></td>
+    <td class="invisible"></td>
+    <td id="r7c4" class="visible"></td>
+    <td class="invisible"></td>
+    <td class="invisible"></td>
+    <td id="r7c7" class="visible"></td>
+    <td class="invisible"></td>
+    <td class="invisible"></td>
+    <td class="invisible"></td>
+  </tr>
+  <tr>
+    <td class="invisible"></td>
+    <td id="r8c2" class="visible"></td>
+    <td class="invisible"></td>
+    <td id="r8c4" class="visible"></td>
+    <td class="invisible"></td>
+    <td id="r8c6" class="visible">‎ ₃</td>
+    <td id="r8c7" class="visible"></td>
+    <td id="r8c8"class="visible"></td>
+    <td id="r8c9"class="visible"></td>
+    <td id="r8c10"class="visible"></td>
+  </tr>
+  <tr>
+    <td class="invisible"></td>
+    <td id="r9c2" class="visible"></td>
+    <td class="invisible"></td>
+    <td id="r9c4" class="visible"></td>
+    <td class="invisible"></td>
+    <td class="invisible"></td>
+    <td class="invisible"></td>
+    <td class="invisible"></td>
+    <td class="invisible"></td>
+    <td class="invisible"></td>
+  </tr>
+  <tr>
+    <td class="invisible"></td>
+    <td class="invisible"></td>
+    <td class="invisible"></td>
+    <td id="r10c4" class="visible"></td>
+    <td class="invisible"></td>
+    <td class="invisible"></td>
+    <td class="invisible"></td>
+    <td class="invisible"></td>
+    <td class="invisible"></td>
+    <td class="invisible"></td>
+  </tr>
+  <tr>
+    <td class="invisible"></td>
+    <td class="invisible"></td>
+    <td class="invisible"></td>
+    <td id="r11c4" class="visible"></td>
+    <td class="invisible"></td>
+    <td class="invisible"></td>
+    <td class="invisible"></td>
+    <td class="invisible"></td>
+    <td class="invisible"></td>
+    <td class="invisible"></td>
+  </tr>
+</table>
+<input type="text" id="input1"/><br/>
+<button onclick="submit1()">Submit</button>
+<div id="hints">
+  <br>
+  <span>Hints:</span><br/>
+  <br/><br/>
+  <span>Across: </span><br/>
+  <span>1. A mathematical statement asserting the equality of two expressions.</span><br/>
+  <span>2. A symbol that represents a quantity that can change or vary.</span><br/>
+  <span>3. A visual representation of data or mathematical functions, typically plotted on a coordinate plane.</span><br/>
+  <br>
+  <span>Down: </span><br/>
+  <span>1. Its graph forms a parabola, and it can have one or two real solutions.</span><br/>
+  <span>2. The point where a line or curve intersects with one of the axes of a coordinate plane.</span><br/>
+  <span>3. An equation whose graph forms a straight line when plotted on a coordinate plane.</span><br/>
+</div>
+
+<script>    
+  function goBack(){
+    window.location.href = "game.html";
+  }
+
+  var wordList = ["equation", "quadratic", "variable", "linear", "graph", "intercept"];
+  function submit1() {
+    var enterWord = input1.value.toLowerCase();
+    if (enterWord == wordList[0]) {
+      r1c1.innerHTML = "E₁";
+      r1c2.innerHTML = "Q₁";
+      r1c3.innerHTML = "U";
+      r1c4.innerHTML = "A";
+      r1c5.innerHTML = "T";
+      r1c6.innerHTML = "I";
+      r1c7.innerHTML = "O";
+      r1c8.innerHTML = "N";
+      input1.value = "";
+    }
+    if (enterWord == wordList[1]) {
+      r1c2.innerHTML = "Q₁";
+      r2c2.innerHTML = "U";
+      r3c2.innerHTML = "A";
+      r4c2.innerHTML = "D";
+      r5c2.innerHTML = "R";
+      r6c2.innerHTML = "A";
+      r7c2.innerHTML = "T";
+      r8c2.innerHTML = "I";
+      r9c2.innerHTML = "C";
+      input1.value = "";
+    }
+    if (enterWord == wordList[2]) {
+      r3c1.innerHTML = "V₂";
+      r3c2.innerHTML = "A";
+      r3c3.innerHTML = "R";
+      r3c4.innerHTML = "I₂";
+      r3c5.innerHTML = "A";
+      r3c6.innerHTML = "B";
+      r3c7.innerHTML = "L₃";
+      r3c8.innerHTML = "E";
+      input1.value = "";
+    }
+    if (enterWord == wordList[3]) {
+      r3c7.innerHTML = "L₃"
+      r4c7.innerHTML = "I"
+      r5c7.innerHTML = "N"
+      r6c7.innerHTML = "E"
+      r7c7.innerHTML = "A"
+      r8c7.innerHTML = "R"
+      input1.value = "";
+    }
+    if (enterWord == wordList[4]) {
+      r8c6.innerHTML = "G₃"
+      r8c7.innerHTML = "R"
+      r8c8.innerHTML = "A"
+      r8c9.innerHTML = "P"
+      r8c10.innerHTML = "H"
+      input1.value = "";
+    }
+    if (enterWord == wordList[5]) {
+      r3c4.innerHTML = "I₂"
+      r4c4.innerHTML = "N"
+      r5c4.innerHTML = "T"
+      r6c4.innerHTML = "E"
+      r7c4.innerHTML = "R"
+      r8c4.innerHTML = "C"
+      r9c4.innerHTML = "E"
+      r10c4.innerHTML = "P"
+      r11c4.innerHTML = "T"
+      input1.value = "";
+    }
+  }
+</script>
+</body>
+</html>
+
     <script>    
-        
-        document.addEventListener('DOMContentLoaded', function() {
-            const equations = [
-                { equation: '2 + 2', type: 'type_test', answer: 4 },
-                { equation: '10 - 5', type: 'type_test', answer: 5 },
-                { equation: '3 * 3', type: 'type_test', answer: 9 },
-                { equation: '20 / 4', type: 'type_test', answer: 5 },
-                { equation: '8 - 3', type: 'type_test', answer: 5 },
-                { equation: '12 + 13', type: 'multiple_choice', choices: [25, 23, 24], answer: 25 },
-                { equation: '20 - 8', type: 'multiple_choice', choices: [11, 12, 13], answer: 12 },
-                { equation: '4 * 4', type: 'multiple_choice', choices: [12, 16, 8], answer: 16 }
-            ];
-
-            const equationElement = document.getElementById('equation');
-            const userInput = document.getElementById('user-input');
-            const submitBtn = document.getElementById('submit-btn');
-            const messageElement = document.getElementById('message');
-            const scoreValueElement = document.getElementById('score-value');
-            const timeLeftElement = document.getElementById('time-left');
-
-            let currentEquation = {};
-            let score = 0;
-            let timeLeft = 60;
-
-            function chooseEquation(equations) {
-                return equations[Math.floor(Math.random() * equations.length)];
-            }
-
-            function displayEquation() {
-                currentEquation = chooseEquation(equations);
-                equationElement.textContent = currentEquation.equation;
-                if (currentEquation.type === 'type_test') {
-                    userInput.style.display = 'block';
-                    submitBtn.style.display = 'block';
-                    userInput.value = '';
-                    userInput.focus();
-                } else {
-                    userInput.style.display = 'none';
-                    submitBtn.style.display = 'none';
-                }
-                if (currentEquation.type === 'multiple_choice') {
-                    renderChoices(currentEquation.choices);
-                }
-            }
-
-            function renderChoices(choices) {
-                const choicesContainer = document.createElement('div');
-                choices.forEach(choice => {
-                    const choiceBtn = document.createElement('button');
-                    choiceBtn.textContent = choice;
-                    choiceBtn.classList.add('choice-btn');
-                    choiceBtn.addEventListener('click', function() {
-                        checkAnswer(choice);
-                    });
-                    choicesContainer.appendChild(choiceBtn);
-                });
-                equationElement.appendChild(choicesContainer);
-            }
-
-            function checkAnswer(choice) {
-                if (parseInt(choice) === currentEquation.answer) {
-                    messageElement.textContent = "Correct!";
-                    messageElement.style.color = "#4caf50";
-                    score++;
-                    scoreValueElement.textContent = score;
-                } else {
-                    messageElement.textContent = "Incorrect. Try again.";
-                    messageElement.style.color  = "#ff0000";
-                }
-                setTimeout(function() {
-                    messageElement.textContent = '';
-                    displayEquation();
-                }, 1000);
-            }
-
-            displayEquation();
-
-            submitBtn.addEventListener('click', function() {
-                if (currentEquation.type === 'type_test') {
-                    checkAnswer(userInput.value.trim());
-                }
-            });
-
-            const timerInterval = setInterval(function() {
-                timeLeft--;
-                timeLeftElement.textContent = timeLeft;
-                if (timeLeft <= 0) {
-                    clearInterval(timerInterval);
-                    alert("Time's up! Your final score is: " + score);
-                    location.reload(); 
-                }
-            }, 1000);
-        });
         function goBack(){
-            console.log('bubu')
-            window.location.href = "game.html"
-            
+            window.location.href = "game.html";
+        }
+
+        var wordList = ["equation", "quadratic", "variable", "linear", "graph", "intercept"];
+        function submit1() {
+            var enterWord = input1.value.toLowerCase();
+            if (enterWord == wordList[0]) {
+                r1c1.innerHTML = "E₁";
+                r1c2.innerHTML = "Q₁";
+                r1c3.innerHTML = "U";
+                r1c4.innerHTML = "A";
+                r1c5.innerHTML = "T";
+                r1c6.innerHTML = "I";
+                r1c7.innerHTML = "O";
+                r1c8.innerHTML = "N";
+                input1.value = "";
+            }
+            if (enterWord == wordList[1]) {
+                r1c2.innerHTML = "Q₁";
+                r2c2.innerHTML = "U";
+                r3c2.innerHTML = "A";
+                r4c2.innerHTML = "D";
+                r5c2.innerHTML = "R";
+                r6c2.innerHTML = "A";
+                r7c2.innerHTML = "T";
+                r8c2.innerHTML = "I";
+                r9c2.innerHTML = "C";
+                input1.value = "";
+            }
+            if (enterWord == wordList[2]) {
+                r3c1.innerHTML = "V₂";
+                r3c2.innerHTML = "A";
+                r3c3.innerHTML = "R";
+                r3c4.innerHTML = "I₂";
+                r3c5.innerHTML = "A";
+                r3c6.innerHTML = "B";
+                r3c7.innerHTML = "L₃";
+                r3c8.innerHTML = "E";
+                input1.value = "";
+            }
+            if (enterWord == wordList[3]) {
+                r3c7.innerHTML = "L₃"
+                r4c7.innerHTML = "I"
+                r5c7.innerHTML = "N"
+                r6c7.innerHTML = "E"
+                r7c7.innerHTML = "A"
+                r8c7.innerHTML = "R"
+                input1.value = "";
+            }
+            if (enterWord == wordList[4]) {
+                r8c6.innerHTML = "G₃"
+                r8c7.innerHTML = "R"
+                r8c8.innerHTML = "A"
+                r8c9.innerHTML = "P"
+                r8c10.innerHTML = "H"
+                input1.value = "";
+            }
+            if (enterWord == wordList[5]) {
+                r3c4.innerHTML = "I₂"
+                r4c4.innerHTML = "N"
+                r5c4.innerHTML = "T"
+                r6c4.innerHTML = "E"
+                r7c4.innerHTML = "R"
+                r8c4.innerHTML = "C"
+                r9c4.innerHTML = "E"
+                r10c4.innerHTML = "P"
+                r11c4.innerHTML = "T"
+                input1.value = "";
+            }
         }
     </script>
 </body>
+
 </html>
