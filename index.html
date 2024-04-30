@@ -3,54 +3,135 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mathscapes</title>
+<title>Mathscapes - The Adventure Begins</title>
 <style>
   body {
-    font-family: Arial, sans-serif;
-    background-color: #f2f2f2;
+    font-family: 'Press Start 2P', cursive;
+    background-color: #000;
     margin: 0;
     padding: 0;
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
+    color: #fff;
+    overflow: hidden;
   }
 
   .container {
     text-align: center;
     animation: fadeIn 1s ease-out forwards;
     opacity: 0;
+    position: relative;
   }
 
   h1 {
-    font-size: 24px;
+    font-size: 36px;
     margin-bottom: 20px;
-    color: #333;
-    animation: slideIn 1s ease-out forwards;
+    color: #fff;
+    text-shadow: 2px 2px 4px #000;
+    animation: sIn 1s ease-out forwards;
     opacity: 0;
   }
 
   button {
-    padding: 10px 20px;
-    font-size: 18px;
+    padding: 15px 30px;
+    font-size: 20px;
     background-color: #007bff;
     color: #fff;
     border: none;
     border-radius: 5px;
     cursor: pointer;
     transition: background-color 0.3s ease;
-    animation: slideIn 1s ease-out forwards;
+    animation: sIn 1s ease-out forwards;
     opacity: 0;
   }
 
   button:hover {
-    background-color: #0056b3;
-    transform: scale(1.1,1.1);
-    
+    background-color: #007bffd5;
+    transform: scale(1.05);
   }
-  
 
-  @keyframes slideIn {
+  .floating-numbers {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none; 
+  }
+
+  .number {
+    position: absolute;
+    color: rgba(255, 255, 255, 0.5);
+    animation: float 5s infinite alternate;
+  }
+
+  @keyframes float {
+    0% {
+      transform: translateY(0);
+    }
+    100% {
+      transform: translateY(-100vh);
+    }
+  }
+  .number:nth-child(1) {
+    font-size: 24px;
+    opacity: 0.3;
+    left: 10%;
+    animation-delay: 0s;
+  }
+
+  .number:nth-child(2) {
+    font-size: 36px;
+    opacity: 0.5;
+    left: 20%;
+    animation-delay: 1s;
+  }
+
+  .number:nth-child(3) {
+    font-size: 48px;
+    opacity: 0.7;
+    left: 30%;
+    animation-delay: 2s;
+  }
+
+  .number:nth-child(4) {
+    font-size: 60px;
+    opacity: 1;
+    left: 40%;
+    animation-delay: 3s;
+  }
+
+  .number:nth-child(5) {
+    font-size: 72px;
+    opacity: 0.7;
+    left: 50%;
+    animation-delay: 4s;
+  }
+
+  .number:nth-child(6) {
+    font-size: 48px;
+    opacity: 0.5;
+    left: 60%;
+    animation-delay: 5s;
+  }
+
+  .number:nth-child(7) {
+    font-size: 36px;
+    opacity: 0.3;
+    left: 70%;
+    animation-delay: 6s;
+  }
+
+  .number:nth-child(8) {
+    font-size: 24px;
+    opacity: 0.5;
+    left: 80%;
+    animation-delay: 7s;
+  }
+
+  @keyframes sIn {
     from {
       transform: translateY(-20px);
       opacity: 0;
@@ -74,16 +155,34 @@
 <body>
 <div class="container">
   <h1>Welcome to Mathscapes</h1>
-  <button id= "hez"onclick="enterGame()">ENTER GAME</button>
+  <button onclick="enterGame()">ENTER GAME</button>
+</div>
+
+<div class="floating-numbers">
 </div>
 
 <script>
   function enterGame() {
     window.location.href = "game.html";
   }
+
+  function createFloatingNumbers() {
+    const floatingNumbers = document.querySelector('.floating-numbers');
+    const numberCount = 8; 
+    const delayIncrement = 1; 
+
+    for (let i = 1; i <= numberCount; i++) {
+      const number = document.createElement('span');
+      number.textContent = i;
+      number.classList.add('number');
+      number.style.left = `${10 + i * 10}%`; 
+      number.style.animationDelay = `${i * delayIncrement}s`;
+      floatingNumbers.appendChild(number);
+    }
+  }
+
+  
+  createFloatingNumbers();
 </script>
 </body>
 </html>
-
-
-
